@@ -257,7 +257,7 @@ rb_get_hw_options(void)
 }
 
 uint8_t * 
-__rb_get_wlan_data(uint16_t id)
+__rb_get_wlan_data(void)
 {
 	uint16_t tag_len;
 	uint8_t *tag;
@@ -270,24 +270,30 @@ __rb_get_wlan_data(uint16_t id)
 	uint32_t magic;
 	uint32_t erd_magic;
 	uint32_t erd_offset;
-	long unsigned int lzo_out_len;
+	size_t lzo_out_len;
 
 	err = rb_find_hard_cfg_tag(RB_ID_WLAN_DATA, &tag, &tag_len);
 	if (err) {
 		printf("no calibration data found\n");
-		//goto err;
+		goto err;
 	}
 
 	buf_lzo_in = malloc(RB_ART_SIZE);
 	if (buf_lzo_in == NULL) {
 		printf("no memory for calibration data\n");
-		//goto err;
+		goto err;
 	}
 
 	buf_rle_out = malloc(RB_ART_SIZE);
 	if (buf_rle_out == NULL) {
 		printf("no memory for calibration data\n");
-		//goto err_free_lzo_out;
+		goto err_free_lzo_out;
+	}
+
+	buf_lzo_out = malloc(RB_ART_SIZE);
+	if (buf_lzo_out == NULL) {
+		printf("no memory for calibration data\n");
+		goto err_free_lzo_in;
 	}
 
 	magic = get_u32(tag);
@@ -296,19 +302,13 @@ __rb_get_wlan_data(uint16_t id)
 		tag_len -= 4;
 		if (tag_len + sizeof(lzo_prefix) > RB_ART_SIZE) {
 			printf("Calibration data too large\n");
-			//goto err_free_lzo_in;
+			goto err_free_lzo_in;
 		}
-		printf("Copying fixed LZO prefix (size: %u)\n", sizeof(lzo_prefix));
+		printf("Copying fixed LZO prefix (size: %d)\n", sizeof(lzo_prefix));
 		memcpy(buf_lzo_in, lzo_prefix, sizeof(lzo_prefix));
 
 		printf("Copying input data (size: %d)\n", tag_len);
 		memcpy(buf_lzo_in + sizeof(lzo_prefix), tag, tag_len);
-
-		buf_lzo_out = malloc(RB_ART_SIZE);
-		if (buf_lzo_out == NULL) {
-			printf("no memory for calibration data\n");
-			//goto err_free_lzo_in;
-		}
 
 		printf("Decompressing with LZO\n");
 		lzo_out_len = RB_ART_SIZE;
@@ -319,7 +319,7 @@ __rb_get_wlan_data(uint16_t id)
 		if (err && err != LZO_E_INPUT_NOT_CONSUMED) {
 			printf("unable to decompress calibration data: %d\n",
 			       err);
-			//goto err_free_lzo_out;
+			goto err_free_lzo_out;
 		}
 
 		printf("Looking for ERD data in decompressed output\n");
@@ -331,7 +331,7 @@ __rb_get_wlan_data(uint16_t id)
 		}
 		if (erd_magic != RB_MAGIC_ERD) {
 			printf("no ERD data found\n");
-			//goto err_free_lzo_out;
+			goto err_free_lzo_out;
 		}
 		printf("Found ERD magic at offset %d\n", erd_offset);
 
@@ -340,7 +340,7 @@ __rb_get_wlan_data(uint16_t id)
 					  0x1, &erd_tag, &erd_tag_len);
 		if (err) {
 			printf("No ERD chunk found\n");
-			//goto err_free_lzo_out;
+			goto err_free_lzo_out;
 		}
 
 		printf("Decompress ERD data with RLE\n");
@@ -348,26 +348,20 @@ __rb_get_wlan_data(uint16_t id)
 				 NULL, NULL);
 		if (err) {
 			printf("unable to decode ERD data\n");
-			//goto err_free_rle_out;
+			goto err_free_rle_out;
 		}
 	}
 
 	return buf_rle_out;
 
-/*err_free_rle_out:
+err_free_rle_out:
 	free(buf_rle_out);
 err_free_lzo_out:
 	free(buf_lzo_out);
 err_free_lzo_in:
 	free(buf_lzo_in);
 err:
-	return NULL;*/
-}
-
-void *
-rb_get_wlan_data(void)
-{
-	return __rb_get_wlan_data(0);
+	return NULL;
 }
 
 int
@@ -453,7 +447,7 @@ main(int argc, char **argv)
 		} else if(strcmp(argv[1], "-f") == 0){
 			printf("%x\n", rb_get_flash_info());
 		} else if(strcmp(argv[1], "-e") == 0){
-			buf = __rb_get_wlan_data(1);
+			buf = __rb_get_wlan_data();
 			if (buf == NULL) {
 				printf("Could not extract calibration data\n");
 				return 1;

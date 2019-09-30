@@ -196,10 +196,6 @@ long    rb_hardconfig_len;
 
 static inline uint32_t get_u32(const void *buf);
 
-void *rb_get_wlan_data(void);
-
-void *rb_get_ext_wlan_data(uint16_t id);
-
 int routerboot_find_tag(uint8_t *buf, unsigned int buflen, uint16_t tag_id,
 			uint8_t **tag_data, uint16_t *tag_len);
 
@@ -224,7 +220,7 @@ uint32_t rb_get_hw_options(void);
 
 int routerboot_find_magic(uint8_t *buf, unsigned int buflen, uint32_t *offset, bool hard);
 
-uint8_t * __rb_get_wlan_data(uint16_t id);
+uint8_t * __rb_get_wlan_data(void);
 
 /*
  * Magic numbers

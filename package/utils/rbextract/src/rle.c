@@ -32,12 +32,12 @@ int rle_decode(const unsigned char *src, size_t srclen,
 		goto out;
 
 	while (1) {
-		char count;
+		signed char count;
 
 		if (srcpos >= srclen)
 			break;
 
-		count = (char) src[srcpos++];
+		count = (signed char) src[srcpos++];
 		if (count == 0) {
 			ret = 0;
 			break;
