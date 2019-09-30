@@ -45,7 +45,7 @@ ath10kcal_mikrotik_extract() {
 	[ -n "$mtd" ] || \
 		ath10kcal_die "no mtd device found for partition $part"
 
-	mikrotik_radio_data.py $mtd
+	rbextract -e $mtd /lib/firmware/erd.bin
 
 	dd if=/lib/firmware/erd.bin of=/lib/firmware/$FIRMWARE iflag=skip_bytes bs=$count skip=$offset count=1 2>/dev/null || \
 		ath10kcal_die "failed to extract calibration data from $mtd"

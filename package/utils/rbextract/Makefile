@@ -10,34 +10,22 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rbextract
 PKG_RELEASE:=1
-
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
-PKG_FLAGS:=nonshared
+CMAKE_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 define Package/rbextract
   SECTION:=utils
   CATEGORY:=Utilities
   SUBMENU:=Boot Loaders
   TITLE:=RouterBOOT ART Extractor
-  DEPENDS:=@TARGET_ipq40xx
+  DEPENDS:=@TARGET_ipq40xx +liblzo
 endef
 
 define Package/rbextract/description
  This utility is for extracting the WLAN radio calibration data from Mikrotik
  Routerboards.
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-	$(MAKE) -C $(PKG_BUILD_DIR) \
-		CC="$(TARGET_CC)" \
-		CFLAGS="$(TARGET_CFLAGS)" \
-		LDFLAGS="$(TARGET_LDFLAGS)"
 endef
 
 define Package/rbextract/install

@@ -216,9 +216,15 @@ const uint8_t * rb_get_board_identifier(void);
 
 const uint8_t * rb_get_board_name(void);
 
+const uint8_t * rb_get_factory_booter_version(void);
+
+uint32_t rb_get_flash_info(void);
+
 uint32_t rb_get_hw_options(void);
 
 int routerboot_find_magic(uint8_t *buf, unsigned int buflen, uint32_t *offset, bool hard);
+
+uint8_t * __rb_get_wlan_data(uint16_t id);
 
 /*
  * Magic numbers
