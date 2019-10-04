@@ -90,11 +90,14 @@ ipq40xx_setup_macs()
 	mikrotik,lhgg-60ad|\
 	mikrotik,hap-ac2)
 		wan_mac=$(mtd_get_mac_binary hard_config 0x10)
+		lan_mac=$(mtd_get_mac_binary hard_config 0x10)+1
+		label_mac="$wan_mac"
 		;;
 	esac
 
 	[ -n "$lan_mac" ] && ucidef_set_interface_macaddr "lan" $lan_mac
 	[ -n "$wan_mac" ] && ucidef_set_interface_macaddr "wan" $wan_mac
+	[ -n "$label_mac" ] && ucidef_set_label_macaddr $label_mac
 }
 
 board_config_update

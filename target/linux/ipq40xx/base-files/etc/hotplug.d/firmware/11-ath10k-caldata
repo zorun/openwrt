@@ -189,7 +189,7 @@ case "$FIRMWARE" in
 		ath10kcal_patch_mac_crc $(macaddr_add "$(cat /sys/class/net/eth0/address)" 2)
 		;;
 	mikrotik,hap-ac2)
-		ath10kcal_mikrotik_extract "hard_config" 0x0 0x7fff
+		ath10kcal_mikrotik_extract "hard_config" 0x0 0x2f20
 		;;
 	meraki,mr33)
 		ath10kcal_ubi_extract "ART" 0x1000 0x2f20
@@ -253,7 +253,7 @@ case "$FIRMWARE" in
 		ath10kcal_patch_mac_crc $(macaddr_add "$(cat /sys/class/net/eth0/address)" 3)
 		;;
 	mikrotik,hap-ac2)
-		ath10kcal_mikrotik_extract "hard_config" 0x8000 0x7fff
+		ath10kcal_mikrotik_extract "hard_config" 0x8000 0x2f20
 		;;
 	meraki,mr33)
 		ath10kcal_ubi_extract "ART" 0x5000 0x2f20

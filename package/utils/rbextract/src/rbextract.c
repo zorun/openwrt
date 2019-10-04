@@ -3,7 +3,7 @@
  *
  *  Copyright (C) 2012 Gabor Juhos <juhosg@openwrt.org>
  *  Copyright (C) 2018 Chris Schimp <silverchris@gmail.com>
- *	Copyright (C) 2019 Robert Marko <robimarko@gmail.com>
+ *  Copyright (C) 2019 Robert Marko <robimarko@gmail.com>
  *  
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License version 2 as published
