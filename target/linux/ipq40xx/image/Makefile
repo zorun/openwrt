@@ -287,6 +287,30 @@ define Device/meraki_mr33
 endef
 TARGET_DEVICES += meraki_mr33
 
+define Device/MikrotikNAND
+	$(call Device/FitImageLzma)
+	BLOCKSIZE := 256k
+	PAGESIZE := 4096
+	KERNEL_INITRAMFS_SUFFIX := -fit-uImage.elf
+	PLATFORM := mikrotik-ipq4xxx
+	KERNEL_INITRAMFS = $$(KERNEL) | ipq-aux-loader-kernel elf
+	IMAGES := sysupgrade.bin
+	IMAGE/sysupgrade.bin/squashfs := append-kernel | ipq-aux-loader-kernel ubi | \
+			sysupgrade-tar kernel=$$$$@ | append-metadata
+	DEVICE_PACKAGES := rbcfg
+endef
+
+# TODO: this device is actually using a NOR flash
+define Device/mikrotik_rbd52g-5hacd2hnd
+	$(call Device/MikrotikNAND)
+	AUX_LOADER_UART := 1
+	DEVICE_VENDOR := MikroTik
+	DEVICE_MODEL := RouterBOARD RBD52G-5HacD2HnD (hAP ac²)
+	DEVICE_DTS := qcom-ipq4018-rbd52g-5hacd2hnd
+	DEVICE_PACKAGES := rbcfg usbutils ath10k-firmware-qca4019-ct
+endef
+TARGET_DEVICES += mikrotik_rbd52g-5hacd2hnd
+
 define Device/netgear_ex61x0v2
 	$(call Device/DniImage)
 	DEVICE_DTS_CONFIG := config@4
