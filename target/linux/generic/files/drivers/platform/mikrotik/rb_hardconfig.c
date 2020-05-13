@@ -674,6 +674,9 @@ int __init rb_hardconfig_init(struct kobject *rb_kobj)
 	int i, ret;
 	u32 magic;
 
+	hc_buf = NULL;
+	hc_kobj = NULL;
+
 	// TODO allow override
 	mtd = get_mtd_device_nm(RB_MTD_HARD_CONFIG);
 	if (IS_ERR(mtd))
@@ -748,6 +751,7 @@ int __init rb_hardconfig_init(struct kobject *rb_kobj)
 
 fail:
 	kfree(hc_buf);
+	hc_buf = NULL;
 	return ret;
 }
 
